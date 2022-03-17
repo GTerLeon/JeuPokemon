@@ -8,7 +8,6 @@ la souris sont désactivées.
 int event_handle(motor_t ** motor)
 {
   int retour=3;
-  Liste_t * truc = player;
   SDL_WaitEvent(&(*motor)->event);
 
   if ((*motor)->event.type == SDL_MOUSEMOTION)
@@ -41,42 +40,6 @@ int event_handle(motor_t ** motor)
 
       case SDLK_RETURN:
 
-      if ((*motor)->menu->menu_battle_attaque == 1){
-        switch ((*motor)->menu->el_battle_menu_atk_select) {
-          case 0:
-          (*motor)->menu->choixCombat = 0;
-          retour = combat(truc,&wild_pkm,(*motor)->menu->choixCombat);
-          break;
-          case 1:
-          (*motor)->menu->choixCombat = 1;
-          retour = combat(truc,&wild_pkm,(*motor)->menu->choixCombat);
-          break;
-          case 2:
-          (*motor)->menu->choixCombat = 2;
-          retour = combat(truc,&wild_pkm,(*motor)->menu->choixCombat);
-          break;
-          case 3:
-          (*motor)->menu->choixCombat = 3;
-          retour = combat(truc,&wild_pkm,(*motor)->menu->choixCombat);
-          break;
-
-        }
-
-        if(retour == 1 || retour == 0){    //plus pkm allie ou ennemi mort
-          (*motor)->menu->speech_bubble = 1;
-          (*motor)->menu->menu_battle_attaque = 0;
-        }
-        else if (retour == 2){ //pkm allie k.o, pkm->next
-          truc = truc->next;
-          printf("TRUC");
-          (*motor)->menu->menu_battle = 1;
-          (*motor)->menu->menu_battle_attaque = 0;
-        }
-        else if (retour == 3){
-          (*motor)->menu->menu_battle = 1;
-          (*motor)->menu->menu_battle_attaque = 0;
-        }
-      }
       if ((*motor)->menu->menu_battle == 1){
         switch ((*motor)->menu->el_battle_menu_select) {
           case 0:
@@ -85,9 +48,11 @@ int event_handle(motor_t ** motor)
           break;
 
           case 1:
-          //(*motor)->menu->menu_battle_attaque= 1;
+
+          (*motor)->menu->menu_pokemon = 1;
           (*motor)->menu->menu_battle = 0;
           break;
+
           case 2:
           //(*motor)->menu->menu_battle_attaque= 1;
           (*motor)->menu->menu_battle = 0;
@@ -99,6 +64,102 @@ int event_handle(motor_t ** motor)
 
         }
       }
+      else if ((*motor)->menu->menu_battle_attaque == 1 && (*motor)->menu->menu_battle == 0){
+        switch ((*motor)->menu->el_battle_menu_atk_select) {
+          case 0:
+          (*motor)->menu->choixCombat = 0;
+          retour = combat(player,&wild_pkm,(*motor)->menu->choixCombat);
+          if (verif_fin_combat(player) == 1){
+            (*motor)->menu->el_battle_menu_select = 0;
+            (*motor)->menu->el_battle_menu_atk_select = 0;
+          }
+          else
+            (*motor)->menu->speech_bubble = 1;
+          break;
+          case 1:
+          (*motor)->menu->choixCombat = 1;
+          retour = combat(player,&wild_pkm,(*motor)->menu->choixCombat);
+          (*motor)->menu->el_battle_menu_select = 0;
+          (*motor)->menu->el_battle_menu_atk_select = 0;
+          break;
+          case 2:
+          (*motor)->menu->choixCombat = 2;
+          retour = combat(player,&wild_pkm,(*motor)->menu->choixCombat);
+          (*motor)->menu->el_battle_menu_select = 0;
+          (*motor)->menu->el_battle_menu_atk_select = 0;
+          break;
+          case 3:
+          (*motor)->menu->choixCombat = 3;
+          retour = combat(player,&wild_pkm,(*motor)->menu->choixCombat);
+          (*motor)->menu->el_battle_menu_select = 0;
+          (*motor)->menu->el_battle_menu_atk_select = 0;
+          break;
+
+        }
+        if(retour == 1 || retour == 0){    //plus pkm allie ou ennemi mort
+          printf("Retour: %d\n", retour);
+          (*motor)->menu->speech_bubble = 1;
+          (*motor)->menu->menu_battle_attaque = 0;
+        }
+        else if (retour == 2){ //pkm allie k.o, pkm->next
+          printf("Retour: %d\n", retour);
+          (*motor)->menu->menu_pokemon = 1;
+          (*motor)->menu->menu_battle_attaque = 0;
+        }
+        else if (retour == 3){  //tour suivant pas de k.o
+          printf("Retour: %d\n", retour);
+          (*motor)->menu->menu_battle = 1;
+          (*motor)->menu->menu_battle_attaque = 0;
+
+        }
+      }
+      else if ((*motor)->menu->menu_pokemon == 1 && (*motor)->menu->menu_battle == 0){
+        switch ((*motor)->menu->el_menu_pokemon_select){
+          case 1:
+          player = current_pkm(player, 1);
+          (*motor)->menu->menu_battle = 1;
+          (*motor)->menu->menu_pokemon = 0;
+          (*motor)->menu->el_battle_menu_select = 0;
+          (*motor)->menu->el_menu_pokemon_select = 0;
+          break;
+          case 2:
+          player = current_pkm(player, 2);
+          (*motor)->menu->menu_battle = 1;
+          (*motor)->menu->menu_pokemon = 0;
+          (*motor)->menu->el_battle_menu_select = 0;
+          (*motor)->menu->el_menu_pokemon_select = 0;
+          break;
+          case 3:
+          player = current_pkm(player, 3);
+          (*motor)->menu->menu_battle = 1;
+          (*motor)->menu->menu_pokemon = 0;
+          (*motor)->menu->el_battle_menu_select = 0;
+          (*motor)->menu->el_menu_pokemon_select = 0;
+          break;
+          case 4:
+          player = current_pkm(player, 4);
+          (*motor)->menu->menu_battle = 1;
+          (*motor)->menu->menu_pokemon = 0;
+          (*motor)->menu->el_battle_menu_select = 0;
+          (*motor)->menu->el_menu_pokemon_select = 0;
+          break;
+          case 5:
+          player = current_pkm(player, 5);
+          (*motor)->menu->menu_battle = 1;
+          (*motor)->menu->menu_pokemon = 0;
+          (*motor)->menu->el_battle_menu_select = 0;
+          (*motor)->menu->el_menu_pokemon_select = 0;
+          break;
+          case 6:
+          player = current_pkm(player, 6);
+          (*motor)->menu->menu_battle = 1;
+          (*motor)->menu->menu_pokemon = 0;
+          (*motor)->menu->el_battle_menu_select = 0;
+          (*motor)->menu->el_menu_pokemon_select = 0;
+          break;
+        }
+      }
+
       break;
 
       case SDLK_m:
@@ -128,7 +189,7 @@ int event_handle(motor_t ** motor)
       else
       (*motor)->menu->el_battle_menu_select =3;
 
-      printf("%d",(*motor)->menu->el_battle_menu_select);
+
 
 
       if ((*motor)->menu->el_battle_menu_atk_select > 0)
@@ -136,7 +197,10 @@ int event_handle(motor_t ** motor)
       else
       (*motor)->menu->el_battle_menu_atk_select =3;
 
-      printf("%d",(*motor)->menu->el_battle_menu_atk_select);
+      if ((*motor)->menu->el_menu_pokemon_select > 0)
+      (*motor)->menu->el_menu_pokemon_select--;
+      else
+      (*motor)->menu->el_menu_pokemon_select = 5;
 
 
 
@@ -149,7 +213,7 @@ int event_handle(motor_t ** motor)
 
       case SDLK_DOWN:
 
-      printf("%d",(*motor)->menu->el_battle_menu_select);
+
       if ((*motor)->menu->el_menu_select < 5)
       (*motor)->menu->el_menu_select++;
       else
@@ -160,14 +224,18 @@ int event_handle(motor_t ** motor)
       (*motor)->menu->el_battle_menu_select++;
       else
       (*motor)->menu->el_battle_menu_select =0;
-      printf("%d",(*motor)->menu->el_battle_menu_select);
+
 
 
       if ((*motor)->menu->el_battle_menu_atk_select < 3)
       (*motor)->menu->el_battle_menu_atk_select++;
       else
       (*motor)->menu->el_battle_menu_atk_select =0;
-      printf("%d",(*motor)->menu->el_battle_menu_atk_select);
+
+      if ((*motor)->menu->el_menu_pokemon_select < 5)
+      (*motor)->menu->el_menu_pokemon_select++;
+      else
+      (*motor)->menu->el_menu_pokemon_select = 0;
 
       break;
 

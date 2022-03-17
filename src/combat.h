@@ -45,6 +45,15 @@ void affiche_Stats(Liste_t *player, t_pkm *wild_pkm){
           wild_pkm->pkm_name, wild_pkm->type1, wild_pkm->type2, wild_pkm->atk, wild_pkm->def, wild_pkm->spatk, wild_pkm->spdef, wild_pkm->sp, wild_pkm->talent, wild_pkm->hp, wild_pkm->mp, wild_pkm->lvl, wild_pkm->exp, wild_pkm->skill[0], wild_pkm->skill[1], wild_pkm->skill[2], wild_pkm->skill[3]);
 }
 
+Liste_t * current_pkm(Liste_t *player, int index){
+  //Liste_t * temp = player;
+  for (int i = 0; i < index; i++){
+    player = player -> next;
+    //player -> next = temp;
+  }
+  return player;
+}
+
 void init_pkm_team(t_pkm *pkm, char nom_pkm[20]){ //inscrit le pokemon dans equipe
   FILE * file_stat;
   char dir[50] = "stat_pkm/";
@@ -102,7 +111,7 @@ void player_attack(Liste_t*player, t_pkm *wild_pkm,int choix){
   file=fopen(dir, "r");
   fscanf(file, "%s %s %i %i %i", nom, type1, &pow, &acc, &pp);
   wild_pkm->hp -= pow;
-  printf("%s inflige %i à %s\n", player->pkm.pkm_name,  pow, wild_pkm->pkm_name);
+  printf("%s inflige %i à %s avec %s\n", player->pkm.pkm_name,  pow, wild_pkm->pkm_name, player->pkm.skill[choix]);
   fclose(file);
 }
 
@@ -118,36 +127,29 @@ int player_choice(){
   return choix;
 }
 
-int verif_fin_combat(Liste_t *player, t_pkm *wild_pkm){
-  if (wild_pkm->hp <= 0){  //joueur gagne
-    return (0);
+int verif_fin_combat(Liste_t *player){
+  int count = 0;
+  int length = Length(player);
+  while(player){
+    if (player->pkm.hp <= 0)
+      count++;
   }
-  else if (player->pkm.hp <= 0){ //joueur perd
-    return (1);
-  }
-  else{
-    return (2);
-  }
+  if (count == length) return 0;
+  else return 1;
 }
 
 
 
 int combat(Liste_t *player, t_pkm *wild_pkm, int choix){
-  while(player->pkm.hp > 0 && wild_pkm->hp >0){
+  if(player->pkm.hp > 0 && wild_pkm->hp > 0){
     player_attack(player, wild_pkm, choix);
+    if (wild_pkm->hp < 0)
+      return 0;
     enemy_attack(player, wild_pkm);
   }
   if (player->pkm.hp <= 0 && player->next->pkm.hp > 0){
     printf("%s est K.O !\n", player->pkm.pkm_name);
     return (2);
-  }
-  else if (wild_pkm->hp <= 0){
-    printf("Joueur a gagné\n");
-    return (0);
-  }
-  else if (player->pkm.hp <= 0 && &player->next->pkm.hp == NULL){
-    printf("Joueur n'a plus de pokémon\n");
-    return (1);
   }
   else
     return 3;

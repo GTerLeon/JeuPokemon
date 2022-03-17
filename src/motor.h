@@ -51,12 +51,14 @@ typedef struct
   int el_menu_select;
   int el_battle_menu_select;
   int el_battle_menu_atk_select;
+  int el_menu_pokemon_select;
   int choixCombat;
   SDL_Texture ** menu_textures;
   int taille;
   int speech_bubble;
   int menu_battle;
   int menu_battle_attaque;
+  int menu_pokemon;
 } menu_t;
 
 typedef struct
@@ -137,12 +139,14 @@ motor_t * init_motor()
     motor->menu->el_menu_select = 0;
     motor->menu->el_battle_menu_select = 0;
     motor->menu->el_battle_menu_atk_select = 0;
+    motor->menu->el_menu_pokemon_select = 0;
     motor->menu->choixCombat = 1;
     motor->menu->taille = 6;
     motor->menu->menu_textures = malloc(sizeof(SDL_Texture*)*10);
     motor->menu->menu_battle=1;
     motor->menu->speech_bubble = 0;
     motor->menu->menu_battle_attaque=0;
+    motor->menu->menu_pokemon=0;
     /* Initialisation de la chaine de char*/
     motor->last_key = malloc(10*sizeof(char));
 
